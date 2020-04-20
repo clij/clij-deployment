@@ -1,2 +1,2 @@
 #!/bin/sh
-sh travis-build.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
+travis-build.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
