@@ -1,5 +1,8 @@
 #!/bin/sh
-cd clij
+git clone --depth=50 --branch=master https://github.com/clij/clij-parent-pom clij-parent-pom
+cd clij-parent-pom
+mvn install
+cd ../clij
 git clone --depth=50 --branch=master https://github.com/clij/clij tmp
 mv tmp/* .
 mv tmp/.* .

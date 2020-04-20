@@ -100,7 +100,7 @@ EOL
 		openssl aes-256-cbc -K "$key" -iv "$iv" -in "$keyFile.enc" -out "$keyFile" -d
 		checkSuccess $?
 	fi
-	if [ -a -f "$keyFile" ]
+	if [ -f "$keyFile" ]
 	then
 		echo
 		echo "== Importing GPG keypair =="
@@ -109,7 +109,7 @@ EOL
 	fi
 
 	# Run the build.
-	if [ -a "$TRAVIS_BRANCH" = master ]
+	if [ "$TRAVIS_BRANCH" = master ]
 	then
 		echo
 		echo "== Cutting and deploying release version =="
