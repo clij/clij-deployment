@@ -139,12 +139,6 @@ EOL
 	if [ "$deployOK" -a "$TRAVIS_BRANCH" = master ]
 	then
 		echo
-		echo "== Building and deploying master SNAPSHOT =="
-		mvn -B -Pdeploy-to-scijava deploy
-		checkSuccess $?
-	elif [ "$deployOK" -a -f release.properties ]
-	then
-		echo
 		echo "== Cutting and deploying release version =="
 		mvn -B release:perform
 		checkSuccess $?
@@ -155,71 +149,6 @@ EOL
 		checkSuccess $?
 	fi
 	echo travis_fold:end:scijava-maven
-fi
-
-# Configure conda environment, if one is needed.
-if [ -f environment.yml ]
-then
-	echo travis_fold:start:scijava-conda
-	echo "= Conda setup ="
-
-	condaDir=$HOME/miniconda
-	condaSh=$condaDir/etc/profile.d/conda.sh
-	if [ ! -f "$condaSh" ]; then
-		echo
-		echo "== Installing conda =="
-		if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ]; then
-			wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
-		else
-			wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-		fi
-		rm -rf "$condaDir"
-		bash miniconda.sh -b -p "$condaDir"
-		checkSuccess $?
-	fi
-
-	echo
-	echo "== Updating conda =="
-	. "$condaSh" &&
-	conda config --set always_yes yes --set changeps1 no &&
-	conda update -q conda &&
-	conda info -a
-	checkSuccess $?
-
-	echo
-	echo "== Configuring environment =="
-	condaEnv=travis-scijava
-	test -d "$condaDir/envs/$condaEnv" && condaAction=update || condaAction=create
-	conda env "$condaAction" -n "$condaEnv" -f environment.yml &&
-	conda activate "$condaEnv"
-	checkSuccess $?
-
-	echo travis_fold:end:scijava-conda
-fi
-
-# Execute Jupyter notebooks.
-if which jupyter >/dev/null 2>/dev/null
-then
-	echo travis_fold:start:scijava-jupyter
-	echo "= Jupyter notebooks ="
-	# NB: This part is fiddly. We want to loop over files even with spaces,
-	# so we use the "find ... -print0 | while read $'\0' ..." idiom.
-	# However, that runs the piped expression in a subshell, which means
-	# that any updates to the success variable will not persist outside
-	# the loop. So we suppress all stdout inside the loop, echoing only
-	# the final value of success upon completion, and then capture the
-	# echoed value back into the parent shell's success variable.
-	success=$(find . -name '*.ipynb' -print0 | {
-		while read -d $'\0' nbf
-		do
-			echo 1>&2
-			echo "== $nbf ==" 1>&2
-			jupyter nbconvert --execute --stdout "$nbf" >/dev/null
-			checkSuccess $?
-		done
-		echo $success
-	})
-	echo travis_fold:end:scijava-jupyter
 fi
 
 exit $success
