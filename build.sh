@@ -10,7 +10,6 @@ installNewParentPom() {
   cd ../clij-parent-pom
   git checkout tags/$1
   mvn install
-  cd ../$repo
 }
 ##
 # Locally install latest parent pom
@@ -56,12 +55,13 @@ do
       installNewParentPom $ppom_version
       ppom_array+=("$ppom_version" )
       echo "Array contains ${ppom_array[@]}"
+      cd ../$repo
     fi
   fi
   echo "== $repo build =="
   mvn -Dmaven.test.skip=true install
   checkSuccess $?
-  mkdir ./target/checkout
+  mkdir target/checkout
   echo "== $repo deploy =="
   .travis/build.sh
   checkSuccess $?
