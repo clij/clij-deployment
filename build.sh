@@ -61,7 +61,7 @@ do
   echo "== $repo build =="
   mvn -Dmaven.test.skip=true install
   checkSuccess $?
-  mkdir target/checkout
+  mkdir ./target/checkout
   echo "== $repo deploy =="
   .travis/build.sh
   checkSuccess $?
