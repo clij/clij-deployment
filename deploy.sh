@@ -112,7 +112,7 @@ EOL
 	then
 		echo
 		echo "== Cutting and deploying release version in $PWD =="
-		mvn -X -e DworkingDirectory=$pwd -Dmaven.test.skip=true deploy
+		mvn -X -e -Dmaven.test.skip=true deploy
 		checkSuccess $?
 	else
 		echo
