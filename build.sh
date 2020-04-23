@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 checkSuccess() {
   if [[ $1 -ne 0 ]]; then
     echo "==> FAILED: EXIT CODE $1"
@@ -63,7 +63,7 @@ do
   echo "== $repo build =="
   mvn -Dmaven.test.skip=true install
   checkSuccess $?
-  #echo "== $repo deploy =="
-  #.travis/build.sh
-  #checkSuccess $?
+  echo "== $repo deploy =="
+  .travis/build.sh
+  checkSuccess $?
 done
