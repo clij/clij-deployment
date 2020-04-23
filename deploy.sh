@@ -102,7 +102,7 @@ EOL
 #	then
 		echo
 		echo "== Cutting and deploying release version =="
-		mvn -X -e -Dmaven.test.skip=true -DaltReleaseDeploymentRepository=scijava.public::default::https://maven.scijava.org/content/groups/public deploy
+		mvn -B -Dmaven.test.skip=true -DaltReleaseDeploymentRepository=scijava.releases::default::https://maven.scijava.org/content/groups/public deploy
 		checkSuccess $?
 #	else
 #		echo

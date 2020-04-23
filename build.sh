@@ -36,7 +36,7 @@ cd ..
 #  clijx-weka
 #  clijx
 ##
-repos="clij-coremem clij-clearcl clij-core clij clij-ops clij-custom-convolution clij2 clijx-weka clijx"
+#repos="clij-coremem clij-clearcl clij-core clij clij-ops clij-custom-convolution clij2 clijx-weka clijx"
 repos="clij-coremem"
 #
 for repo in $repos
