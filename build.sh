@@ -63,6 +63,7 @@ do
   checkSuccess $?
   echo "== $repo deploy =="
   cp ../deploy.sh .travis
+  mkdir -p target/checkout
   .travis/build.sh
   checkSuccess $?
   cd ..
