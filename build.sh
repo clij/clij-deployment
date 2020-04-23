@@ -62,6 +62,7 @@ do
   mvn -B -Dmaven.test.skip=true install
   checkSuccess $?
   mvn clean
+  echo `ls ~/.m2`
   echo "== $repo deploy =="
   .travis/build.sh
   checkSuccess $?
