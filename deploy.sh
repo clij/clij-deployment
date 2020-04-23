@@ -1,11 +1,7 @@
 #!/bin/bash
-
 #
-# travis-build.sh - A script to build and/or release SciJava-based projects.
+# A script to build and/or release SciJava-based projects.
 #
-
-dir="$(dirname "$0")"
-
 success=0
 checkSuccess() {
 	# Log non-zero exit code.
@@ -25,16 +21,11 @@ then
 
 	# NB: Suppress "Downloading/Downloaded" messages.
 	# See: https://stackoverflow.com/a/35653426/1207769
-	export MAVEN_OPTS="$MAVEN_OPTS -Dmaven.test.skip=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn" 
+	export MAVEN_OPTS="$MAVEN_OPTS -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn" 
 
 	# Populate the settings.xml configuration.
-	settingsFile="/home/travis/.m2/settings-security.xml"
-	customSettings=.travis/settings.xml
-	if [ -f "$customSettings" ]
-	then
-		cp "$customSettings" "$settingsFile"
-	else
-		cat >"$settingsFile" <<EOL
+	settingsFile="$HOME/.m2/settings.xml"
+	cat >"$settingsFile" <<EOL
 <settings>
 	<servers>
 		<server>
@@ -85,7 +76,6 @@ EOL
 	</profiles>
 </settings>
 EOL
-	fi
 
 	# Import the GPG signing key.
 	keyFile=.travis/signingkey.asc
@@ -108,18 +98,18 @@ EOL
 	fi
 
 	# Run the build.
-	if [ "$TRAVIS_BRANCH" = master ]
-	then
+#	if [ "$TRAVIS_BRANCH" = master ]
+#	then
 		echo
-		echo "== Cutting and deploying release version in $PWD =="
-		mvn -X -e -Dmaven.test.skip=true deploy
+		echo "== Cutting and deploying release version =="
+		mvn -X -e -Dmaven.test.skip=true -DaltReleaseDeploymentRepository=scijava.public::default::https://maven.scijava.org/content/groups/public deploy
 		checkSuccess $?
-	else
-		echo
-		echo "== Building the artifact locally only =="
-		mvn -B install javadoc:javadoc
-		checkSuccess $?
-	fi
+#	else
+#		echo
+#		echo "== Building the artifact locally only =="
+#		mvn -B -Dmaven.test.skip=true install
+#		checkSuccess $?
+#	fi
 	echo travis_fold:end:scijava-maven
 fi
 
