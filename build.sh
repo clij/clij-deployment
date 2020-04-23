@@ -44,9 +44,7 @@ for repo in $repos
 do
   echo "== NOW BUILDING $repo =="
   git clone --depth=50 --branch=master https://github.com/clij/$repo $repo
-  mv tmp/* .
-  mv tmp/.* .
-  rmdir tmp
+  cd $repo
   # Check what version of the parent pom is being used
   ppom_version=$(grep -ri "<version>" pom.xml | head -n 1 | sed -n -e 's/.*<version>\(.*\)<\/version>.*/\1/p')
   if [ "$ppom_version" != "$parentpom_version" ]; then
