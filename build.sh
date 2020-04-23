@@ -24,6 +24,7 @@ echo "== Latest parent pom version is $parentpom_version"
 ppom_array+=("$parentpom_version")
 echo "Array contains ${ppom_array[@]}"
 mvn install
+cd ..
 ##
 # Next we need to perform the buil in the following order
 #  clij-coremem
@@ -41,9 +42,8 @@ repos="clij-coremem"
 #
 for repo in $repos
 do
-  cd ../$repo
   echo "== NOW BUILDING $repo =="
-  git clone --depth=50 --branch=master https://github.com/clij/$repo tmp
+  git clone --depth=50 --branch=master https://github.com/clij/$repo $repo
   mv tmp/* .
   mv tmp/.* .
   rmdir tmp
@@ -66,4 +66,5 @@ do
   echo "== $repo deploy =="
   .travis/build.sh
   checkSuccess $?
+  cd ..
 done
