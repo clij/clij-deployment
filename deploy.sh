@@ -111,7 +111,7 @@ EOL
 	if [ "$TRAVIS_BRANCH" = master ]
 	then
 		echo
-		echo "== Cutting and deploying release version =="
+		echo "== Cutting and deploying release version in $PWD =="
 		mvn -X -e -Dmaven.test.skip=true release:perform
 		checkSuccess $?
 	else
