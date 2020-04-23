@@ -63,12 +63,7 @@ do
   checkSuccess $?
   echo "== $repo deploy =="
   cp ../deploy.sh .travis
-  mkdir -p /home/travis/build/clij/clij-deployment/$repo/target/checkout
-  echo $PWD
-  echo 'ls'
   .travis/build.sh
-  echo $PWD
-  echo 'ls'
   checkSuccess $?
   cd ..
 done
