@@ -21,7 +21,7 @@ parentpom_version=$(grep -ri "<version>" pom.xml | tail -n +2 | head -n 1 | sed 
 echo "== Latest parent pom version is $parentpom_version"
 # Keep track of parent pom versions, so we don't re-install existing ones
 ppom_array+=("$parentpom_version")
-echo "Array contains ${ppom_array[@]}"
+echo "Installed pom(s): ${ppom_array[@]}"
 mvn install
 cd ..
 ##
@@ -49,17 +49,17 @@ do
   if [ "$ppom_version" != "$parentpom_version" ]; then
     echo "== Uses parent pom version $ppom_version"
     if [[ "${ppom_array[@]}" =~ "${ppom_version}" ]]; then
-      echo "Already installed";
+      echo "Parent pom already installed";
     else
       echo "Need to install parent pom version $ppom_version"
       installNewParentPom $ppom_version
       ppom_array+=("$ppom_version" )
-      echo "Array contains ${ppom_array[@]}"
+      echo "Installed pom(s): ${ppom_array[@]}"
       cd ../$repo
     fi
   fi
   echo "== $repo build =="
-  mvn -Dmaven.test.skip=true install
+  mvn -B -Dmaven.test.skip=true install
   checkSuccess $?
   echo `ls -la`
   mkdir target/checkout
