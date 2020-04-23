@@ -58,9 +58,6 @@ do
       cd ../$repo
     fi
   fi
-  echo "== $repo build =="
-  mvn -B -Dmaven.test.skip=true install
-  checkSuccess $?
   echo "== $repo deploy =="
   cp ../deploy.sh .travis
   .travis/build.sh

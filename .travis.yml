@@ -5,6 +5,3 @@ branches:
   - master
 install: true
 script: "./build.sh"
-cache:
-  directories:
-  - "~/.m2/repository"
