@@ -60,7 +60,7 @@ do
   echo "== $repo deploy =="
   #cp ../deploy.sh .travis
   #.travis/build.sh
-  ../deploy.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
+  deploy.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
   #checkSuccess $?
   cd ..
 done
