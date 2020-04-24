@@ -36,8 +36,7 @@ cd ..
 #  clijx-weka
 #  clijx
 ##
-#repos="clij-coremem clij-clearcl clij-core clij clij-ops clij-custom-convolution clij2 clijx-weka clijx"
-repos="clij-coremem"
+repos="clij-coremem clij-clearcl clij-core clij clij-ops clij-custom-convolution clij2 clijx-weka clijx"
 #
 for repo in $repos
 do
@@ -62,6 +61,6 @@ do
   #cp ../deploy.sh .travis
   #.travis/build.sh
   ../deploy.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
-  checkSuccess $?
+  #checkSuccess $?
   cd ..
 done
