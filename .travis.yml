@@ -4,6 +4,8 @@ branches:
   only:
   - master
   - "/.*-[0-9]+\\..*/"
+before_install:
+  - sudo apt-get -y install openjfx
 install: true
 script: ./build.sh
 cache:
