@@ -1,3 +1,5 @@
+[![](https://travis-ci.com/clij/clij-deployment.svg?branch=master)](https://travis-ci.com/clij/clij-deployment)
+
 # clij-deployment
 clij artifacts are deployed from
 https://github.com/clij/clij
