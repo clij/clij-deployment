@@ -2,83 +2,15 @@
 #
 # A script to build and/or release SciJava-based projects.
 #
-success=0
 checkSuccess() {
-	# Log non-zero exit code.
-	test $1 -eq 0 || echo "==> FAILED: EXIT CODE $1" 1>&2
-
-	# Record the first non-zero exit code.
-	test $success -eq 0 && success=$1
+  if [[ $1 -ne 0 ]]; then
+    echo "==> FAILED: EXIT CODE $1"
+    exit 1
+  fi
 }
-
-# Build Maven projects.
 if [ -f pom.xml ]
 then
-	echo travis_fold:start:scijava-maven
-	echo "= Maven build ="
-	echo
-	echo "== Configuring Maven =="
-
-	# NB: Suppress "Downloading/Downloaded" messages.
-	# See: https://stackoverflow.com/a/35653426/1207769
 	export MAVEN_OPTS="$MAVEN_OPTS -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn" 
-
-	# Populate the settings.xml configuration.
-	settingsFile="$HOME/.m2/settings.xml"
-	cat >"$settingsFile" <<EOL
-<settings>
-	<servers>
-		<server>
-			<id>scijava.releases</id>
-			<username>travis</username>
-			<password>\${env.MAVEN_PASS}</password>
-		</server>
-		<server>
-			<id>scijava.snapshots</id>
-			<username>travis</username>
-			<password>\${env.MAVEN_PASS}</password>
-		</server>
-		<server>
-			<id>sonatype-nexus-releases</id>
-			<username>scijava-ci</username>
-			<password>\${env.OSSRH_PASS}</password>
-		</server>
-	</servers>
-EOL
-		# NB: Use maven.scijava.org as sole mirror if defined in <repositories>.
-		# This hopefully avoids intermittent "ReasonPhrase:Forbidden" errors
-		# when the Travis build pings Maven Central; see travis-ci/travis-ci#6593.
-		grep -A 2 '<repository>' pom.xml | grep -q 'maven.scijava.org' &&
-		cat >>"$settingsFile" <<EOL
-	<mirrors>
-		<mirror>
-			<id>scijava-mirror</id>
-			<name>SciJava mirror</name>
-			<url>https://maven.scijava.org/content/groups/public/</url>
-			<mirrorOf>*</mirrorOf>
-		</mirror>
-	</mirrors>
-EOL
-		cat >>"$settingsFile" <<EOL
-	<profiles>
-		<profile>
-			<id>gpg</id>
-			<activation>
-				<file>
-					<exists>\${env.HOME}/.gnupg</exists>
-				</file>
-			</activation>
-			<properties>
-				<gpg.keyname>\${env.GPG_KEY_NAME}</gpg.keyname>
-				<gpg.passphrase>\${env.GPG_PASSPHRASE}</gpg.passphrase>
-			</properties>
-		</profile>
-	</profiles>
-</settings>
-EOL
-  echo "<DEBUG>"
-  cat "$HOME/.m2/settings.xml"
-  echo "</DEBUG>"
 	# Import the GPG signing key.
 	keyFile=signingkey.asc
 	key=$1
@@ -100,19 +32,16 @@ EOL
 	fi
 
 	# Run the build.
-#	if [ "$TRAVIS_BRANCH" = master ]
-#	then
+	if [ "$TRAVIS_BRANCH" = master ]
+	then
 		echo
 		echo "== Cutting and deploying release version =="
 		mvn -X -e -Dmaven.test.skip=true -DaltReleaseDeploymentRepository=scijava.releases::default::https://maven.scijava.org/content/repositories/releases/ deploy
 		checkSuccess $?
-#	else
-#		echo
-#		echo "== Building the artifact locally only =="
-#		mvn -B -Dmaven.test.skip=true install
-#		checkSuccess $?
-#	fi
-	echo travis_fold:end:scijava-maven
+	else
+		echo
+		echo "== Building the artifact locally only =="
+		mvn -B -Dmaven.test.skip=true install
+		checkSuccess $?
+	fi
 fi
-
-exit $success

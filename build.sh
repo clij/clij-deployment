@@ -1,4 +1,55 @@
 #!/bin/bash
+poulateSettingsFile() {
+  settingsFile="$HOME/.m2/settings.xml"
+	cat >"$settingsFile" <<EOL
+<settings>
+	<servers>
+		<server>
+			<id>scijava.releases</id>
+			<username>travis</username>
+			<password>\${env.MAVEN_PASS}</password>
+		</server>
+		<server>
+			<id>scijava.snapshots</id>
+			<username>travis</username>
+			<password>\${env.MAVEN_PASS}</password>
+		</server>
+		<server>
+			<id>sonatype-nexus-releases</id>
+			<username>scijava-ci</username>
+			<password>\${env.OSSRH_PASS}</password>
+		</server>
+	</servers>
+EOL
+  grep -A 2 '<repository>' pom.xml | grep -q 'maven.scijava.org' &&
+  cat >>"$settingsFile" <<EOL
+	<mirrors>
+		<mirror>
+			<id>scijava-mirror</id>
+			<name>SciJava mirror</name>
+			<url>https://maven.scijava.org/content/groups/public/</url>
+			<mirrorOf>*</mirrorOf>
+		</mirror>
+	</mirrors>
+EOL
+  cat >>"$settingsFile" <<EOL
+	<profiles>
+		<profile>
+			<id>gpg</id>
+			<activation>
+				<file>
+					<exists>\${env.HOME}/.gnupg</exists>
+				</file>
+			</activation>
+			<properties>
+				<gpg.keyname>\${env.GPG_KEY_NAME}</gpg.keyname>
+				<gpg.passphrase>\${env.GPG_PASSPHRASE}</gpg.passphrase>
+			</properties>
+		</profile>
+	</profiles>
+</settings>
+EOL
+}
 checkSuccess() {
   if [[ $1 -ne 0 ]]; then
     echo "==> FAILED: EXIT CODE $1"
@@ -11,6 +62,9 @@ installNewParentPom() {
   git checkout tags/$1
   mvn install
 }
+##
+echo "== Populate settings.xml file for authentication =="
+poulateSettingsFile
 ##
 # Locally install latest parent pom
 ##
