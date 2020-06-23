@@ -114,6 +114,6 @@ do
   echo "== $repo deploy =="
   echo "$PWD"
   ../deploy.sh $encrypted_8bc46b011822_key $encrypted_8bc46b011822_iv
-  #checkSuccess $?
+  checkSuccess $?
   cd ..
 done
